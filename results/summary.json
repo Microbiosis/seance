@@ -1,0 +1,31 @@
+{
+  "primary_level_K": 16,
+  "m2_metric": "atlas",
+  "decoder": {
+    "single_trial_accuracy_pct": 4.5,
+    "single_trial_x_chance": 9.0,
+    "best_accuracy_pct": 41.0,
+    "shuffled_label_best_accuracy_pct": 2.0,
+    "chance_pct": 0.5
+  },
+  "ghost": {
+    "names_true_real_pct": 16.666666666666664,
+    "names_true_real_ci95": [
+      8.333333333333332,
+      26.666666666666668
+    ],
+    "names_true_swapped_pct": 0.0,
+    "names_true_blind_pct": 0.0,
+    "impression_correct_rate_pct": 26.666666666666668,
+    "mean_content_words": 37.21666666666667,
+    "similarity_different_sitters": 0.10697655927753807,
+    "similarity_impression_swapped": 0.09916326009055251,
+    "similarity_impression_dropped": 0.08127747616184715,
+    "similarity_blind_to_blind": 1.0,
+    "fidelity_real_pct": 55.00000000000001,
+    "fidelity_real_ci95": [
+      43.29166666666667,
+      68.33333333333333
+    ]
+  }
+}

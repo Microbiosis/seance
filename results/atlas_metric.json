@@ -1,0 +1,84 @@
+{
+  "1": {
+    "message_real": {
+      "matches_truth_rate": 0.016666666666666666,
+      "matches_truth_ci95": [
+        0.0,
+        0.05
+      ],
+      "matches_impression_rate": 0.6166666666666667,
+      "matches_impression_ci95": [
+        0.48333333333333334,
+        0.7333333333333333
+      ],
+      "fidelity_given_medium_right": 0.5,
+      "n_sittings_medium_right": 2
+    },
+    "message_swapped": {
+      "matches_truth_rate": 0.0,
+      "matches_truth_ci95": [
+        0.0,
+        0.0
+      ],
+      "matches_impression_rate": 0.6166666666666667,
+      "matches_impression_ci95": [
+        0.5,
+        0.7333333333333333
+      ],
+      "fidelity_given_medium_right": null,
+      "n_sittings_medium_right": 0
+    },
+    "message_blind": {
+      "matches_truth_rate": 0.0,
+      "matches_truth_ci95": [
+        0.0,
+        0.0
+      ],
+      "matches_impression_rate": null,
+      "matches_impression_ci95": null,
+      "fidelity_given_medium_right": null,
+      "n_sittings_medium_right": 0
+    }
+  },
+  "16": {
+    "message_real": {
+      "matches_truth_rate": 0.16666666666666666,
+      "matches_truth_ci95": [
+        0.08333333333333333,
+        0.26666666666666666
+      ],
+      "matches_impression_rate": 0.55,
+      "matches_impression_ci95": [
+        0.4329166666666667,
+        0.6833333333333333
+      ],
+      "fidelity_given_medium_right": 0.5625,
+      "n_sittings_medium_right": 16
+    },
+    "message_swapped": {
+      "matches_truth_rate": 0.0,
+      "matches_truth_ci95": [
+        0.0,
+        0.0
+      ],
+      "matches_impression_rate": 0.55,
+      "matches_impression_ci95": [
+        0.4166666666666667,
+        0.6833333333333333
+      ],
+      "fidelity_given_medium_right": null,
+      "n_sittings_medium_right": 0
+    },
+    "message_blind": {
+      "matches_truth_rate": 0.0,
+      "matches_truth_ci95": [
+        0.0,
+        0.0
+      ],
+      "matches_impression_rate": null,
+      "matches_impression_ci95": null,
+      "fidelity_given_medium_right": null,
+      "n_sittings_medium_right": 0
+    }
+  }
+}
