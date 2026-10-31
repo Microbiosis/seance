@@ -35,6 +35,24 @@ AUTHOR = {
 MESSAGE = "seance: a seance rig that reads a brain (linear probe + local Gemma 3 4B)"
 
 
+def local_head() -> tuple[str, str]:
+    """The message and the date of the local commit being published.
+
+    A fixed message makes every published commit read the same, which tells a
+    reader nothing about what changed between them; a fixed date makes the
+    history lie about when the work happened.  Both come from the local
+    commit instead.
+    """
+    out = subprocess.run(["git", "-C", str(REPO), "log", "-1",
+                           "--pretty=%aI%x00%s%x00%b"], capture_output=True, text=True)
+    parts = out.stdout.split("\0")
+    date = parts[0].strip() if parts else ""
+    subject = parts[1].strip() if len(parts) > 1 else ""
+    body = parts[2].strip() if len(parts) > 2 else ""
+    message = subject + (f"\n\n{body}" if body else "")
+    return message or MESSAGE, date or AUTHOR["date"]
+
+
 def gh_token() -> str:
     out = subprocess.run(["gh", "auth", "token"], capture_output=True, text=True)
     value = out.stdout.strip()
@@ -202,12 +220,16 @@ def main() -> int:
     head = head_sha(api, token)
     print(f"  parent {head or '(none: first commit)'}", flush=True)
 
+    message, date = local_head()
+    author = {**AUTHOR, "date": date}
+    print(f"  message: {message.splitlines()[0]}", flush=True)
+
     for attempt in range(1, args.tries + 1):
         try:
             commit = curl("POST", f"{api}/git/commits",
-                          {"message": MESSAGE, "tree": tree_ans["sha"],
+                          {"message": message, "tree": tree_ans["sha"],
                            "parents": [head] if head else [],
-                           "author": AUTHOR, "committer": AUTHOR}, token)
+                           "author": author, "committer": author}, token)
             break
         except RuntimeError as exc:
             print(f"  commit attempt {attempt}: {exc}", flush=True)
