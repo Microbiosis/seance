@@ -25,6 +25,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 SPACE = REPO / "space"
 ASSETS = REPO / "app" / "assets"
+APP = REPO / "app" / "app.py"
 PROXY = "http://127.0.0.1:7897"
 
 
@@ -46,6 +47,10 @@ def main() -> int:
     if (SPACE / "assets").exists():
         shutil.rmtree(SPACE / "assets")
     shutil.copytree(ASSETS, SPACE / "assets")
+
+    # the console code has one home: app/app.py in the repository.  Copy it in,
+    # so the Space can never run a stale copy of the app.
+    shutil.copyfile(APP, SPACE / "app.py")
 
     # a fresh index: only the files the Space should have
     code, out = run(["git", "read-tree", "--empty"], cwd=SPACE)

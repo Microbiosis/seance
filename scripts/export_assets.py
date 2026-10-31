@@ -12,7 +12,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import shutil
 import sys
 from pathlib import Path
 
@@ -44,12 +43,6 @@ def main() -> None:
     dec, _, _ = audit_mod.fit_decoder(feats, cfg)
 
     out = export_space_assets(feats, subject.concepts, dec, result, Path(args.out), args.k)
-    # the ghost's own 200 concept descriptions are what the M2 metric matches
-    # against; ship them with the assets so the metric can be re-checked
-    atlas = ROOT / "results" / "atlas.json"
-    if atlas.exists():
-        shutil.copy2(atlas, Path(args.out) / "atlas.json")
-        out["atlas"] = str(Path(args.out) / "atlas.json")
     for name, path in out.items():
         print(f"{name}: {path}")
 

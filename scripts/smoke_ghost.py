@@ -1,4 +1,7 @@
-"""Smoke test: can we load the local ghost and make it speak?"""
+"""Smoke test: can we load the local ghost and make it speak?
+
+    python scripts/smoke_ghost.py [path/to/gemma-3-4b-it-bnb-4bit]
+"""
 
 from __future__ import annotations
 
@@ -11,9 +14,11 @@ sys.path.insert(0, str(ROOT))
 
 from seance.ghost import Ghost, Sitting, build_prompt  # noqa: E402
 
+DEFAULT_MODEL = ROOT / "models" / "gemma-3-4b-it-bnb-4bit"
+
 
 def main() -> None:
-    model_dir = sys.argv[1] if len(sys.argv) > 1 else r"E:\seance_work\models\gemma-3-4b-it-bnb-4bit"
+    model_dir = sys.argv[1] if len(sys.argv) > 1 else str(DEFAULT_MODEL)
     t0 = time.time()
     ghost = Ghost(model_dir, max_new_tokens=80, seed=0)
     print(f"[smoke] loaded in {time.time()-t0:.1f}s", flush=True)

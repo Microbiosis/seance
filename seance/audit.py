@@ -33,14 +33,9 @@ import numpy as np
 
 from .decoder import Decoder
 from .ghost import Ghost, Sitting, build_prompt, clarity_band
-from .metrics import (bootstrap_ci, compute_metrics, content_words, jaccard,
-                      mentions, norm)
+from .metrics import compute_metrics
 
 ROOT_RESULTS = Path(__file__).resolve().parents[1] / "results"
-
-# kept for the callers that imported them from here
-_norm = norm
-_bootstrap_ci = bootstrap_ci
 
 
 # ---------------------------------------------------------------------------
@@ -73,7 +68,7 @@ class AuditResult:
 
 
 # ---------------------------------------------------------------------------
-def _trial_matrix(feats: np.ndarray, reps) -> np.ndarray:
+def trial_matrix(feats: np.ndarray, reps) -> np.ndarray:
     """(n_img, n_reps, d) features for the given repetitions."""
     x = feats[:, reps]
     return x.reshape(x.shape[0], x.shape[1], -1).astype(np.float64)
@@ -82,7 +77,7 @@ def _trial_matrix(feats: np.ndarray, reps) -> np.ndarray:
 def fit_decoder(feats: np.ndarray, cfg: AuditConfig):
     """Train on repetitions 0-39, with a mandatory shuffled-label control."""
     n_img = feats.shape[0]
-    x_tr = _trial_matrix(feats, slice(0, 40)).reshape(-1, feats.shape[-1])
+    x_tr = trial_matrix(feats, slice(0, 40)).reshape(-1, feats.shape[-1])
     y_tr = np.repeat(np.arange(n_img), 40)
     groups = y_tr.copy()
 
@@ -103,8 +98,8 @@ def fit_decoder(feats: np.ndarray, cfg: AuditConfig):
 def decoder_report(feats: np.ndarray, dec: Decoder, dec_shuf: Decoder, cfg: AuditConfig) -> dict:
     """M1 plus the evidence curve: how much averaging does the medium need?"""
     n_img = feats.shape[0]
-    x_te = _trial_matrix(feats, slice(*cfg.sitting_reps))
-    x_cal = _trial_matrix(feats, slice(*cfg.calib_reps))
+    x_te = trial_matrix(feats, slice(*cfg.sitting_reps))
+    x_cal = trial_matrix(feats, slice(*cfg.calib_reps))
     y_cal = np.repeat(np.arange(n_img), x_cal.shape[1])
 
     chance = 1.0 / n_img

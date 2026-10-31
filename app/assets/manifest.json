@@ -1,5 +1,5 @@
 {
-  "note": "Assets are gzipped, base64-encoded and split into parts because the network that uploaded this Space cannot carry a request body larger than about 100 KB. Reassemble with scripts/pack_assets.py (or app/app.py's loader).",
+  "note": "Assets are gzipped, base64-encoded and split into parts. Reassemble with scripts/pack_assets.py (or app/app.py's loader).",
   "encoding": "gzip+base64",
   "assets": {
     "probe.json": {

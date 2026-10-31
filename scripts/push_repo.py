@@ -1,20 +1,16 @@
 """Push the repository to GitHub through the REST git-data API.
 
-Two facts about the link this repository is uploaded from shape the whole
-script:
-
-  * it drops HTTP request bodies over roughly ten kilobytes (67 KB passed
-    once under light load, 12 KB failed under load, 1 KB always passed), and
-    the limit moves with the load, so every request has to be small *and*
-    every request has to be retried;
-  * git's own push protocol (`git-receive-pack`) is mangled outright: the pack
-    goes out and the answer never arrives.  Plain REST survives.
-
-So: one blob per file, then one tree, one commit and one branch move.  Files
-are sent in the order that matters (the figures the post links to first, the
+One blob per file, then one tree, one commit and one branch move.  Files are
+sent in the order that matters (the figures the post links to first, the
 packed demo assets last), the upload is resumable through a cache of blob
 shas, and every answer is checked against the sha git computes for the same
 bytes.
+
+The REST API rather than `git push` because this path is resumable: a link
+that drops large bodies does not have to be restarted from the beginning, and
+every blob is verified on its own.  (The link drops bodies only when the
+traffic leaves through the proxy; routed directly, `git push` is fine -- the
+Space is pushed that way, see scripts/deploy_space.py.)
 
     python scripts/push_repo.py --repo Microbiosis/seance
 """
@@ -122,6 +118,15 @@ def blob_sha(raw: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 
+def head_sha(api: str, token: str) -> str | None:
+    """The commit `main` currently points at, if there is one."""
+    try:
+        answer = curl("GET", f"{api}/git/ref/heads/main", None, token)
+    except RuntimeError:
+        return None
+    return answer.get("object", {}).get("sha")
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--repo", default="Microbiosis/seance")
@@ -192,10 +197,16 @@ def main() -> int:
         return 1
     print(f"  tree {tree_ans['sha']}", flush=True)
 
+    # the new commit hangs off the one that is already there, so the published
+    # repository keeps a history instead of being a single snapshot
+    head = head_sha(api, token)
+    print(f"  parent {head or '(none: first commit)'}", flush=True)
+
     for attempt in range(1, args.tries + 1):
         try:
             commit = curl("POST", f"{api}/git/commits",
-                          {"message": MESSAGE, "tree": tree_ans["sha"], "parents": [],
+                          {"message": MESSAGE, "tree": tree_ans["sha"],
+                           "parents": [head] if head else [],
                            "author": AUTHOR, "committer": AUTHOR}, token)
             break
         except RuntimeError as exc:

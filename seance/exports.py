@@ -9,15 +9,12 @@ The Space cannot run a 4B model at interactive speed on CPU, so it ships:
 Everything the console shows is either computed live from the probe or is a
 verbatim transcript from the offline run; the Space says so on screen.
 
-The probe and the sitting features are stored as base64 float32 inside JSON
-rather than as .npz: the Hub treats .npz as LFS, and LFS needs a second
-(presigned-S3) upload step that this machine's network cannot carry
-reliably.  Plain JSON goes through as an ordinary git blob.
-
-The figures go the same way -- base64 PNG inside assets/figures.json -- because
-the Hub's LFS decision is per-file and unpredictable (two of the three PNGs
-come back "regular", one comes back "lfs"), and a single LFS file is enough to
-send the whole upload down the path that does not work here.
+The probe, the sitting features and the figures are stored as base64 inside
+JSON rather than as .npz and .png files: the Hub's LFS route (a second,
+presigned upload) is unreachable from the machine that uploads this project,
+and its LFS decision is per-file and unpredictable anyway.  Plain JSON goes
+through as an ordinary git blob.  See the README, "How the assets ship, and
+why".
 """
 
 from __future__ import annotations
@@ -27,12 +24,6 @@ import json
 from pathlib import Path
 
 import numpy as np
-
-from .audit import _trial_matrix
-
-
-def _b64(arr: np.ndarray) -> str:
-    return base64.b64encode(np.ascontiguousarray(arr, dtype=np.float32).tobytes()).decode("ascii")
 
 
 FIGURES = ("fig_evidence.png", "fig_levels.png", "fig_audit.png", "fig_example.png")
@@ -47,11 +38,11 @@ def export_space_assets(feats: np.ndarray, concepts: list[str], decoder, result,
                          dtype: str = "float16") -> dict:
     """`result` is the audit JSON dict (as written to results/audit.json).
 
-    The numeric arrays ship as float16: the build network that uploads the
-    Space can only carry ~12 KB per request, so the assets have to be small.
-    float16 was checked against the audited probe -- it reproduces all 60
-    audited impressions (int8 does not: it flips 3 of them, because some
-    top-1/top-2 margins are razor thin).
+    The numeric arrays ship as float16: the upload link cannot carry large
+    request bodies, so the assets have to be small.  float16 was checked
+    against the audited probe -- it reproduces all 60 audited impressions
+    (int8 does not: it flips 3 of them, because some top-1/top-2 margins are
+    razor thin).
     """
     out_dir.mkdir(parents=True, exist_ok=True)
 

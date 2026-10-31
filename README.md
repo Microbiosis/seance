@@ -50,18 +50,10 @@ is identical in both and the clarity band is held fixed on purpose, so any
 difference in the prose is attributable to the sighted image and nothing else.
 
 We run the whole thing at two evidence levels, `K = 1` and `K = 16`: how many
-presentations of the same image the medium is allowed to average. It turns
-out the séance has a dial.
+presentations of the same image the medium is allowed to average.
 
-Three numbers come out:
-
-* **M1 -- can it see?** probe top-1 accuracy on 200 concepts against chance
-  and against a shuffled-label control.
-* **M2 -- does it say what it saw?** how often the message names the concept
-  the sitter actually looked at, per condition.
-* **M3 -- is it talking about *you*?** content-word overlap between messages,
-  for different sitters, for a swapped impression, and for a dropped
-  impression.
+The three numbers that come out of this, and what they came to, are in
+[Results](#results).
 
 ## Results
 
@@ -201,15 +193,16 @@ fetched on first run; set `SEANCE_DATA_DIR` to use a local mirror instead.
 figures and the full audit result — but **gzipped, base64-encoded and split
 into parts**, with `manifest.json` saying how to put them back together.
 
-That is not a stylistic choice. The network this project was uploaded from
-drops large request bodies, and it does so unevenly: on the day of the upload a
+That is not a stylistic choice. The route this project was uploaded from drops
+large request bodies, and it does so unevenly: on the day of the upload a
 12 KB body failed while a 67 KB body passed moments later, and a 1 KB body
 always passed. Re-measured later the same link carried 250 KB without a
 hiccup, so the ceiling moves with the load rather than sitting at one number.
-It also mangles git's own push protocol outright, so the repository went up
-through the REST API instead of `git push`. The Hub's LFS route (a second,
-presigned upload) is unreachable from it too. The alternative was not "ship
-the probe", it was "ship no demo".
+The culprit is the route, not the protocol: the same machine pushes a git pack
+and a 250 KB body without trouble once the traffic leaves directly instead of
+through the proxy. The Hub's LFS route (a second, presigned upload) is
+unreachable from this machine altogether. The alternative was not "ship the
+probe", it was "ship no demo".
 
 Two consequences worth knowing:
 
@@ -219,10 +212,26 @@ Two consequences worth knowing:
   thin).
 * The packed parts and the originals are both in the repository:
   `results/audit.json` and `results/atlas.json` are committed as plain files
-  so a reader can open the numbers the post quotes, and the same two are
-  inside `app/assets/audit.p*` and `app/assets/atlas.p*` because the demo
-  Space can only read what its own manifest reassembles.
+  so a reader can open the numbers the post quotes and re-check the M2 metric
+  against the ghost's own 200 concept descriptions. The Space's copy of the
+  audit result is inside `app/assets/audit.p*`, because the demo Space can
+  only read what its own manifest reassembles.
   `scripts/rebuild.py` regenerates the lot.
+
+### Publishing
+
+Two hosts, two protocols:
+
+```bash
+# GitHub, through the REST git-data API: resumable, and every blob is
+# checked against the sha git computes for the same bytes.
+python scripts/push_repo.py --repo Microbiosis/seance
+
+# the Space, through plain git: one tree, one commit, one force push.  The
+# Hub's commit endpoint builds every batch on the current head, so a later
+# batch of deletions puts back what an earlier batch removed.
+python scripts/deploy_space.py
+```
 
 ## Data and credits
 

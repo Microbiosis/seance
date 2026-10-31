@@ -19,11 +19,12 @@ Two numbers come out:
 The first is the ghost's fidelity.  The second is the whole channel from
 brain to prose: fidelity x how often the medium was right.
 
-    python scripts/atlas_metric.py
+    python scripts/atlas_metric.py --model models/gemma-3-4b-it-bnb-4bit
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -33,12 +34,19 @@ import numpy as np
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from seance.audit import _bootstrap_ci, content_words  # noqa: E402
 from seance.data import load_subject  # noqa: E402
 from seance.ghost import Ghost, Sitting, build_prompt  # noqa: E402
+from seance.metrics import bootstrap_ci, content_words  # noqa: E402
 
-MODEL = r"E:\seance_work\models\gemma-3-4b-it-bnb-4bit"
+DEFAULT_MODEL = ROOT / "models" / "gemma-3-4b-it-bnb-4bit"
 ATLAS_PATH = ROOT / "results" / "atlas.json"
+
+
+def parse_args() -> argparse.Namespace:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--model", type=str, default=str(DEFAULT_MODEL),
+                    help="local Gemma 3 directory")
+    return ap.parse_args()
 
 
 def build_atlas(concepts: list[str], model: str) -> dict[str, str]:
@@ -74,9 +82,10 @@ def match(message: str, atlas: dict[str, str], keys: list[str]) -> str:
 
 
 def main() -> None:
+    args = parse_args()
     subject = load_subject(1)
     concepts = list(subject.concepts)
-    atlas = build_atlas(concepts, MODEL)
+    atlas = build_atlas(concepts, args.model)
     keys = list(atlas)
 
     path = ROOT / "results" / "audit.json"
@@ -108,9 +117,9 @@ def main() -> None:
                         fid_right_num += hit_imp
             level_out[cond] = {
                 "matches_truth_rate": float(np.mean(hits_truth)),
-                "matches_truth_ci95": _bootstrap_ci(hits_truth),
+                "matches_truth_ci95": bootstrap_ci(hits_truth),
                 "matches_impression_rate": float(np.mean(hits_impression)) if hits_impression else None,
-                "matches_impression_ci95": _bootstrap_ci(hits_impression) if hits_impression else None,
+                "matches_impression_ci95": bootstrap_ci(hits_impression) if hits_impression else None,
                 "fidelity_given_medium_right": (fid_right_num / fid_right_den) if fid_right_den else None,
                 "n_sittings_medium_right": fid_right_den,
             }
@@ -122,8 +131,6 @@ def main() -> None:
 
     result["atlas"] = out
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
-    (ROOT / "results" / "atlas_metric.json").write_text(
-        json.dumps(out, indent=2, ensure_ascii=False), encoding="utf-8")
 
     # Rebuild the figures and the summary now that the atlas metric exists, so
     # the plots and the write-up quote the same numbers.

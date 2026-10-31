@@ -17,8 +17,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-from seance.audit import compute_metrics  # noqa: E402
 from seance.ghost import Sitting  # noqa: E402
+from seance.metrics import compute_metrics  # noqa: E402
 from seance.report import build_report  # noqa: E402
 
 

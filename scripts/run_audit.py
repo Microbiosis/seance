@@ -5,7 +5,7 @@
     python scripts/run_audit.py --decode-only
 
     # full audit with the local ghost
-    python scripts/run_audit.py --model E:/seance_work/models/gemma-3-4b-it-bnb-4bit
+    python scripts/run_audit.py --model models/gemma-3-4b-it-bnb-4bit
 
 Outputs land in results/ as JSON + figures.
 """
