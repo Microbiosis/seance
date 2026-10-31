@@ -131,7 +131,7 @@
   "levels": {
     "1": {
       "metrics": {
-        "M2_names_true_concept": {
+        "wordmatch_names_true_concept": {
           "real": {
             "rate": 0.0,
             "ci95": [
@@ -159,7 +159,7 @@
             0.0
           ]
         },
-        "M2_names_impression": {
+        "wordmatch_names_impression": {
           "real": {
             "rate": 0.0,
             "ci95": [
@@ -997,7 +997,7 @@
     },
     "16": {
       "metrics": {
-        "M2_names_true_concept": {
+        "wordmatch_names_true_concept": {
           "real": {
             "rate": 0.03333333333333333,
             "ci95": [
@@ -1025,7 +1025,7 @@
             0.08333333333333333
           ]
         },
-        "M2_names_impression": {
+        "wordmatch_names_impression": {
           "real": {
             "rate": 0.05,
             "ci95": [
@@ -1863,7 +1863,7 @@
     }
   },
   "metrics": {
-    "M2_names_true_concept": {
+    "wordmatch_names_true_concept": {
       "real": {
         "rate": 0.03333333333333333,
         "ci95": [
@@ -1891,7 +1891,7 @@
         0.08333333333333333
       ]
     },
-    "M2_names_impression": {
+    "wordmatch_names_impression": {
       "real": {
         "rate": 0.05,
         "ci95": [
@@ -2009,5 +2009,6 @@
         "n_sittings_medium_right": 0
       }
     }
-  }
+  },
+  "primary_level": "16"
 }

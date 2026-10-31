@@ -97,12 +97,6 @@ class Decoder:
     def predict(self, x: np.ndarray) -> np.ndarray:
         return self.scores(x).argmax(axis=1)
 
-    def topk(self, x: np.ndarray, k: int = 5) -> tuple[np.ndarray, np.ndarray]:
-        """Returns (indices, sorted scores) of the k highest-scoring classes."""
-        s = self.scores(x)
-        idx = np.argsort(-s, axis=1)[:, :k]
-        return idx, np.take_along_axis(s, idx, axis=1)
-
     def margin(self, x: np.ndarray) -> np.ndarray:
         """Top-1 minus top-2 score: how separated the winner is."""
         s = self.scores(x)

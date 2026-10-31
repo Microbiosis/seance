@@ -13,10 +13,7 @@ be reproduced.
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
-
-import numpy as np
 
 SYSTEM_PROMPT = (
     "You are the spirit on the other side of a séance table, speaking through a "

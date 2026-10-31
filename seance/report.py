@@ -99,7 +99,7 @@ def m2_for(result: dict, level: str) -> tuple[dict, str]:
     atlas = atlas_m2(result, level)
     if atlas:
         return atlas, "atlas"
-    return result["levels"][level]["metrics"]["M2_names_true_concept"], "word-boundary"
+    return result["levels"][level]["metrics"]["wordmatch_names_true_concept"], "word-boundary"
 
 
 def atlas_fidelity(result: dict, level: str) -> dict | None:

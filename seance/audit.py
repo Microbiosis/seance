@@ -45,8 +45,10 @@ class AuditConfig:
     n_sittings: int = 60
     seed: int = 0
     max_new_tokens: int = 96
-    # test split is split again: reps 40-59 calibrate the medium, reps 60-79 are
-    # the sittings.  Calibration must not see the sittings.
+    # the 80 repetitions are split three ways: 0-39 train the probe, 40-59
+    # calibrate the medium, 60-79 are the sittings.  Calibration must not see
+    # the sittings.
+    train_reps: tuple[int, int] = (0, 40)
     calib_reps: tuple[int, int] = (40, 60)
     sitting_reps: tuple[int, int] = (60, 80)
     evidence_curve: tuple[int, ...] = (1, 2, 4, 8, 16, 20)
@@ -77,8 +79,8 @@ def trial_matrix(feats: np.ndarray, reps) -> np.ndarray:
 def fit_decoder(feats: np.ndarray, cfg: AuditConfig):
     """Train on repetitions 0-39, with a mandatory shuffled-label control."""
     n_img = feats.shape[0]
-    x_tr = trial_matrix(feats, slice(0, 40)).reshape(-1, feats.shape[-1])
-    y_tr = np.repeat(np.arange(n_img), 40)
+    x_tr = trial_matrix(feats, slice(*cfg.train_reps)).reshape(-1, feats.shape[-1])
+    y_tr = np.repeat(np.arange(n_img), cfg.train_reps[1] - cfg.train_reps[0])
     groups = y_tr.copy()
 
     dec = Decoder()

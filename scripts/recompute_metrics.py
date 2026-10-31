@@ -51,13 +51,13 @@ def main() -> None:
     path.write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     build_report(result, ROOT / "results")
 
-    m2 = result["metrics"]["M2_names_true_concept"]
-    m2i = result["metrics"]["M2_names_impression"]
+    m2 = result["metrics"]["wordmatch_names_true_concept"]
+    m2i = result["metrics"]["wordmatch_names_impression"]
     print(f"primary level K={primary}")
     for c in ("real", "swapped", "blind"):
         lo, hi = m2[c]["ci95"]
-        print(f"  names true concept  {c:<8} {m2[c]['rate']*100:5.1f}%  CI {lo*100:.1f}-{hi*100:.1f}%")
-    print(f"  names impression     real     {m2i['real']['rate']*100:5.1f}%")
+        print(f"  word-boundary match  {c:<8} {m2[c]['rate']*100:5.1f}%  CI {lo*100:.1f}-{hi*100:.1f}%")
+    print(f"  word-boundary impression        {m2i['real']['rate']*100:5.1f}%")
     print(f"  impression correct           {result['metrics']['impression_correct_rate']*100:5.1f}%")
 
 

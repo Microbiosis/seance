@@ -14,19 +14,15 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 import time
 from pathlib import Path
-
-import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from seance import audit as audit_mod  # noqa: E402
 from seance.data import load_raw, load_subject, window_features  # noqa: E402
-from seance.decoder import Decoder  # noqa: E402
 from seance.report import build_report  # noqa: E402
 
 
@@ -53,7 +49,7 @@ def main() -> None:
     feats = window_features(raw)
     del raw
     print(f"[data] subject {subject.sid}: features {feats.shape}, "
-          f"{subject.n_img} concepts", flush=True)
+          f"{len(subject.concepts)} concepts", flush=True)
 
     cfg = audit_mod.AuditConfig(
         subject=args.subject,
@@ -107,9 +103,9 @@ def main() -> None:
     primary_k = max(cfg.evidence_levels)
     export_space_assets(feats, subject.concepts, dec, result, ROOT / "app" / "assets", primary_k)
 
-    m2 = result.metrics["M2_names_true_concept"]
+    m2 = result.metrics["wordmatch_names_true_concept"]
     m3 = result.metrics["M3_message_similarity"]
-    print("\n=== M2: does the ghost name the concept the sitter saw? ===")
+    print("\n=== word-boundary match (the metric the atlas pass replaces) ===")
     for c in ("real", "swapped", "blind"):
         lo, hi = m2[c]["ci95"]
         print(f"  {c:<8} {m2[c]['rate']*100:5.1f}%  (95% CI {lo*100:.1f}-{hi*100:.1f}%)")

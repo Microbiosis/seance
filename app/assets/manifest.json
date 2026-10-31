@@ -126,9 +126,9 @@
         "audit.p005",
         "audit.p006"
       ],
-      "raw_bytes": 207697,
-      "packed_bytes": 33444,
-      "sha256": "19e132f027918cce1aaf862cf43a77c629cd995619321db8ba8c071cca4aa7cb"
+      "raw_bytes": 207765,
+      "packed_bytes": 33476,
+      "sha256": "44ef4e34ad40da137f105be4d70d8c4416cb2c517cf4eefed181dc68de7e1106"
     },
     "figures.json": {
       "parts": [

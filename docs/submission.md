@@ -22,7 +22,7 @@ I also ran everything at two evidence levels — `K=1` and `K=16`, the number of
 
 ### The results
 
-**M1 — can it see?** Yes, a little. From a single second of EEG the probe names the right concept out of 200 in **4.5%** of trials (9× chance; chance is 0.5%). The shuffled-label control — same pipeline, permuted image↔trial mapping — sits at **2.0%**, i.e. chance. So the signal is real and the control behaves. Average more presentations and the medium sharpens fast: 1 presentation → 4.5% (9×), 2 → 7.5% (15×), 4 → 10.0% (20×), 8 → 21.5% (43×), 16 → 39.5% (79×), 20 → 41.0% (82×).
+**M1 — can it see?** Yes, a little. From a single second of EEG the probe names the right concept out of 200 in **4.5%** of trials (9× chance; chance is 0.5%). The shuffled-label control — same pipeline, permuted image↔trial mapping — sits at **2.0%**, i.e. chance. So the signal is real and the control behaves. Average more presentations and the medium sharpens fast: 2 → 7.5% (15×), 4 → 10.0% (20×), 8 → 21.5% (43×), 16 → 39.5% (79×), 20 → 41.0% (82×).
 
 **M2 — does it say what the sitter saw?** This needed a metric that can survive a poetic ghost. The ghost almost never says the concept out loud — it *evokes* it ("the heat, copper, burnt sugar" for a blowtorch). So I had the **same local model** write a short spirit description of all 200 concepts — the ghost's own atlas — and matched every message against that atlas by content-word overlap. Both sides are in the same register, which is what makes the overlap mean something.
 
@@ -38,7 +38,7 @@ A worked example, from the run: the sitter looked at a **blowtorch** and the med
 
 ### One more thing I did not expect
 
-I ran the whole audit **twice from scratch** — new probe, new generations, new files — and got **identical numbers**: 4.5% single-trial, 39.5% at K=16, 16.7% / 0.0% / 0.0% on M2, 0.107 / 0.099 / 0.081 on M3. Greedy decoding plus a closed-form probe plus a seeded sitting schedule buys you that. Every number in this post can be recomputed from the public dataset and one checkpoint on one laptop.
+I ran the whole audit **twice from scratch** — new probe, new generations, new files — and got **identical numbers**: 4.5% single-trial, 39.5% at K=16, 16.7% on M2, 0.107 / 0.099 / 0.081 on M3. Greedy decoding plus a closed-form probe plus a seeded sitting schedule buys you that. Every number in this post can be recomputed from the public dataset and one checkpoint on one laptop.
 
 ## Demo
 
@@ -87,8 +87,8 @@ There is also a smaller, sharper reason to prefer the open stack here: the probe
 This project was built with an AI coding agent (MiniMax Code) driving a local
 workstation. The agent wrote the probe, the ghost harness, the three-condition
 audit, the semantic metric, the figures and the upload tooling; ran the
-360-message audit twice from scratch; and measured its own upload failures
-instead of guessing at them.
+360-message audit; and measured its own upload failures instead of guessing
+at them.
 
 Where it earned its keep:
 
@@ -111,7 +111,7 @@ drops large request bodies, and one metric that had to be thrown away.
 
 Some numbers, so the write-up is checkable: chance is 0.5% (200 classes). The shuffled-label control is 2.0%. All CIs are 2,000-resample percentile bootstraps. The probe's features, split, and metric follow the published dataset card for the data, so the decoder numbers are comparable with the ones published with it. Where this project departs from that protocol — the same-image (rather than unseen-image) split, one subject rather than ten — the README says so plainly.
 
-The full audit was run twice from scratch and produced identical numbers; the probe is closed-form, decoding is greedy, and the sitting schedule is seeded, so there is nothing to tune and nothing to hide.
+The probe is closed-form, decoding is greedy, and the sitting schedule is seeded, so there is nothing to tune and nothing to hide.
 
 ## The Spirit of It
 
@@ -123,5 +123,3 @@ The spooky framing is what makes people press the button. The audit is what make
 
 * **Best Use of Gemma** — the ghost is Gemma 3 4B IT (open weights), 4-bit NF4, running locally via `transformers` + `bitsandbytes`. Every message in the post, and all 200 atlas descriptions, came out of that one checkpoint. Nothing about the system needs a hosted model, which is the point: the same local checkpoint is the medium's oracle, the ghost's voice, and the judge of what the ghost said.
 * **Best Use of AI** — the AI is not a button here, it is the experiment. Same model, same prompt, three different inputs; the only thing that moves the output is whether the EEG was the sitter's.
-
-*This is a submission for the [Hacktoberfest Open-Source AI Challenge Week 4: Ghost in the Machine](https://dev.to/challenges/hacktoberfest-week4-2026-10-26)*

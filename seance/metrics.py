@@ -3,11 +3,11 @@
 Kept apart from the audit machinery (seance/audit.py) because these are the
 pieces the M2 and M3 numbers are made of:
 
-  mentions        word-boundary match (the strict metric)
+  mentions        word-boundary match (the metric the atlas pass replaces)
   content_words   the vocabulary of a message, stopwords removed
   jaccard         overlap between two messages
   bootstrap_ci    percentile bootstrap confidence interval
-  compute_metrics M2 and M3 for one evidence level
+  compute_metrics the word-boundary numbers and M3 for one evidence level
 """
 
 from __future__ import annotations
@@ -106,7 +106,7 @@ def compute_metrics(sittings, real_msgs, scr_msgs, blind_msgs) -> dict:
     ]))
 
     return {
-        "M2_names_true_concept": {
+        "wordmatch_names_true_concept": {
             "real": {"rate": real_true, "ci95": real_true_ci},
             "swapped": {"rate": scr_true, "ci95": scr_true_ci},
             "blind": {"rate": blind_true, "ci95": blind_true_ci},
@@ -117,7 +117,7 @@ def compute_metrics(sittings, real_msgs, scr_msgs, blind_msgs) -> dict:
                  for i in range(n)]
             ),
         },
-        "M2_names_impression": {
+        "wordmatch_names_impression": {
             "real": {"rate": real_sight, "ci95": real_sight_ci},
             "swapped": {"rate": scr_sight, "ci95": scr_sight_ci},
         },
