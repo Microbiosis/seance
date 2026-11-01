@@ -26,6 +26,16 @@ SPACE = REPO / "space"
 ASSETS = REPO / "app" / "assets"
 APP = REPO / "app" / "app.py"
 PROXY = "http://127.0.0.1:7897"
+# the Space's own files live in the repository, not in this staging directory:
+# app.py, requirements.txt, the front-matter README and the attributes file.
+# A Space built from a directory the repository does not own cannot be rebuilt
+# from a clone, and its dependency list is where a missing package hides.
+SPACE_FILES = (
+    (APP, "app.py"),
+    (REPO / "app" / "requirements.txt", "requirements.txt"),
+    (REPO / "app" / "README.md", "README.md"),
+    (REPO / ".gitattributes", ".gitattributes"),
+)
 
 
 def run(args: list[str], cwd: Path | None = None) -> tuple[int, str]:
@@ -49,7 +59,10 @@ def main() -> int:
 
     # the console code has one home: app/app.py in the repository.  Copy it in,
     # so the Space can never run a stale copy of the app.
-    shutil.copyfile(APP, SPACE / "app.py")
+    for src, name in SPACE_FILES:
+        if not src.exists():
+            raise SystemExit(f"missing Space file: {src}")
+        shutil.copyfile(src, SPACE / name)
 
     # a fresh index: only the files the Space should have
     code, out = run(["git", "read-tree", "--empty"], cwd=SPACE)

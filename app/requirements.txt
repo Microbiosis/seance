@@ -1,0 +1,12 @@
+# The demo Space's own dependencies.
+#
+# matplotlib is listed on purpose: the Hugging Face Spaces base image pins
+# streamlit==1.40.0, and that release does NOT depend on matplotlib (newer
+# streamlit versions do).  Without this line the console dies with
+# "No module named 'matplotlib'" the moment it draws the electrode grid.
+#
+# The console also uses the 1.40-era API (st.dataframe(use_container_width=...)),
+# so the base image's pin is load-bearing: do not raise the floor casually.
+streamlit>=1.40.0
+numpy>=1.24.0
+matplotlib>=3.7

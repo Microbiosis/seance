@@ -87,7 +87,14 @@ def sight(probe: dict, x: np.ndarray) -> tuple[int, float]:
 
 
 def _window_plot(grid: np.ndarray):
-    import matplotlib
+    """The electrode grid, or None when this host has no matplotlib.
+
+    A missing plotting library must not take the whole console down with it.
+    """
+    try:
+        import matplotlib
+    except ImportError:
+        return None
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
@@ -151,8 +158,12 @@ def main() -> None:
             st.caption("calibrated P(the impression is right)")
             with st.expander("the signal behind the impression"):
                 grid = feat.reshape(N_CH, N_WIN)
-                st.pyplot(_window_plot(grid), clear_figure=True)
-                st.caption("amplitude per electrode across ten 100 ms windows")
+                fig = _window_plot(grid)
+                if fig is None:
+                    st.caption("the electrode grid needs matplotlib, which this host does not have")
+                else:
+                    st.pyplot(fig, clear_figure=True)
+                    st.caption("amplitude per electrode across ten 100 ms windows")
             with st.expander("what the sitter actually saw"):
                 st.write(f"**{row['true_concept']}**")
                 st.caption("ground truth from the experiment, not shown to the ghost")
