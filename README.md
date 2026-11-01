@@ -233,6 +233,21 @@ python scripts/push_repo.py --repo Microbiosis/seance
 python scripts/deploy_space.py
 ```
 
+`app/` is the Space's source: `app/app.py` is the console, `app/requirements.txt`
+is what the container installs, `app/README.md` carries the Space front matter.
+`scripts/deploy_space.py` copies them into `space/` before pushing, so the
+Space runs the repository's files rather than a copy that can drift.
+
+A Space can report `RUNNING` and still be broken: a missing package in the
+container only shows up when the script runs, long after the health check says
+"ok". `scripts/verify_space.py` drives the live Space over the same websocket
+the browser uses, fails on any exception, and checks that the page still shows
+the audited numbers.
+
+```bash
+python scripts/verify_space.py
+```
+
 ## Data and credits
 
 * **EEG:** [THINGS-EEG](https://doi.org/10.1016/j.neuroimage.2022.119754)
