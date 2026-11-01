@@ -47,7 +47,8 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--remote", default="origin")
     ap.add_argument("--branch", default="main")
-    ap.add_argument("--message", default="seance console: live probe, recorded transcripts, packed assets")
+    ap.add_argument("--message", default=None,
+                    help="Space commit message (default: the repository's HEAD message)")
     ap.add_argument("--no-push", action="store_true")
     args = ap.parse_args()
 
@@ -77,7 +78,8 @@ def main() -> int:
     code, out = run(["git", "status", "--short"], cwd=SPACE)
     print(out.strip()[:2000] or "(tree matches the staging directory)")
 
-    code, out = run(["git", "commit", "-q", "-m", args.message], cwd=SPACE)
+    message = args.message or local_head()[0]
+    code, out = run(["git", "commit", "-q", "-m", message], cwd=SPACE)
     if code != 0:
         # nothing changed is not a failure: the tree is what it should be
         if "nothing to commit" not in out:
