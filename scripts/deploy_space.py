@@ -19,7 +19,12 @@ from __future__ import annotations
 import argparse
 import shutil
 import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from push_repo import local_head  # the same rule the GitHub pusher uses
 
 REPO = Path(__file__).resolve().parents[1]
 SPACE = REPO / "space"
